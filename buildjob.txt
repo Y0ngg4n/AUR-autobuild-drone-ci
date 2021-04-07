@@ -3,23 +3,24 @@
     user: 0
     commands:
       - pacman -Syu --noconfirm
-      - cd /oblivion/x86_64
-      - cd /oblivion/x86_64 && pacman -S wget curl jq --noconfirm
-      - cd /oblivion/x86_64 && curl -sSL -k -X GET -G $REPO_API_URL/assets?repository=oblivion-os > output
-      - cd /oblivion/x86_64 && cat output | jq '.items | map(.downloadUrl)' > jq-output
-      - cd /oblivion/x86_64 && for k in $(jq -r ".[]" jq-output); do wget "$k"; done
-      - cd /oblivion/x86_64 && cat jq-output && ls -la
-      - cd /oblivion/x86_64 && rm -rf jq-output output repo.*
-      - ls -la /oblivion/x86_64
-      - cd /oblivion/x86_64 && repo-add repo.db.tar.gz *.pkg.tar.*
-      - cd /oblivion/x86_64 && for filename in /oblivion/x86_64/*; do curl -X DELETE -v -u "$USERNAME:$PASSWORD" $REPO_URL/$(basename $filename) ; done
-      - cd /oblivion/x86_64 && for filename in /oblivion/x86_64/*; do curl -v -u "$USERNAME:$PASSWORD" -T $filename $REPO_URL/$(basename $filename) ; done 
+      - cd "$MOUNT_POINT"
+      - cd "$MOUNT_POINT" && pacman -S wget curl jq --noconfirm
+      - cd "$MOUNT_POINT" && curl -sSL -k -X GET -G $REPO_API_URL/assets?repository=oblivion-os > output
+      - cd "$MOUNT_POINT" && cat output | jq '.items | map(.downloadUrl)' > jq-output
+      - cd "$MOUNT_POINT" && for k in $(jq -r ".[]" jq-output); do wget "$k"; done
+      - cd "$MOUNT_POINT" && cat jq-output && ls -la
+      - cd "$MOUNT_POINT" && rm -rf jq-output output repo.*
+      - ls -la "$MOUNT_POINT"
+      - cd "$MOUNT_POINT" && repo-add repo.db.tar.gz *.pkg.tar.*
+      - cd "$MOUNT_POINT" && for filename in "$MOUNT_POINT"/*; do curl -X DELETE -v -u "$USERNAME:$PASSWORD" $REPO_URL/$(basename $filename) ; done
+      - cd "$MOUNT_POINT" && for filename in "$MOUNT_POINT"/*; do curl -v -u "$USERNAME:$PASSWORD" -T $filename $REPO_URL/$(basename $filename) ; done 
     volumes:
       - name: oblivion
         path: /oblivion/x86_64
     environment:
       REPO_API_URL: https://nexus.oblivioncoding.pro/service/rest/v1
       REPO_URL: https://nexus.oblivioncoding.pro/repository/oblivion-os
+      MOUNT_POINT: /oblivion/x86_64
       USERNAME:
         from_secret: nexus_username
       PASSWORD:
