@@ -1,0 +1,50 @@
+kind: pipeline
+type: docker
+name: default
+
+steps:
+  - name: calamares-git
+    image: yonggan/docker-makepkg-drone-ci
+    user: 0
+    commands:
+      - /bin/su -s /bin/sh -c '/run.sh /drone/src/calamares-git' notroot 
+    volumes:
+      - name: repo
+        path: /repo
+    environment:
+      EXPORT_PKG: true
+
+  - name: ckbcomp
+    image: yonggan/docker-makepkg-drone-ci
+    user: 0
+    commands:
+      - /bin/su -s /bin/sh -c '/run.sh /drone/src/ckbcomp' notroot
+    volumes:
+      - name: repo
+        path: /repo
+    environment:
+      EXPORT_PKG: true   
+
+  
+  - name: build-db-and-push
+    image: yonggan/docker-makepkg-drone-ci
+    commands:
+      - ls -la /repo
+      - FILES=/repo/*
+      - for f in $FILES
+      - do
+      - curl -v --user "$USERNAME:$PASSWORD" --upload-file $f "${REPO_URL}/${f}"
+      - done
+    volumes:
+      - name: repo
+        path: /repo
+    environment:
+      REPO_URL: https://nexus.oblivioncoding.pro/repository/oblivion-os/
+      USERNAME:
+        from_secret: nexus_username
+      PASSWORD:
+        from_secret: nexus_password
+
+volumes:
+  - name: repo
+    temp: {}

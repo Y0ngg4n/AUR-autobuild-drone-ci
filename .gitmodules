@@ -1,0 +1,36 @@
+[submodule "ananicy"]
+	path = ananicy
+	url = https://aur.archlinux.org/ananicy.git
+[submodule "nohang"]
+	path = nohang
+	url = https://aur.archlinux.org/nohang.git
+[submodule "ckbcomp"]
+	path = ckbcomp
+	url = https://aur.archlinux.org/ckbcomp.git
+[submodule "mkinitcpio-openswap"]
+	path = mkinitcpio-openswap
+	url = https://aur.archlinux.org/mkinitcpio-openswap.git
+[submodule "oblivion-settings-manager"]
+	path = oblivion-settings-manager
+	url = https://git.oblivioncoding.pro/OblivionOS/oblivion-settings-manager.git
+[submodule "pamac-all"]
+	path = pamac-all
+	url = https://aur.archlinux.org/pamac-all.git
+[submodule "snapd-git"]
+	path = snapd-git
+	url = https://aur.archlinux.org/snapd-git.git
+[submodule "snapd-glib-git"]
+	path = snapd-glib-git
+	url = https://aur.archlinux.org/snapd-glib-git.git
+[submodule "timeshift"]
+	path = timeshift
+	url = https://aur.archlinux.org/timeshift.git
+[submodule "timeshift-autosnap"]
+	path = timeshift-autosnap
+	url = https://aur.archlinux.org/timeshift-autosnap.git
+[submodule "zram-generator"]
+	path = zram-generator
+	url = https://aur.archlinux.org/zram-generator.git
+[submodule "calamares-git"]
+	path = calamares-git
+	url = https://git.oblivioncoding.pro/OblivionOS/calamares-git.git

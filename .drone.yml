@@ -1,0 +1,185 @@
+kind: pipeline
+type: docker
+name: default
+
+steps:
+
+  - name: submodules
+    image: alpine/git
+    commands:
+      - git submodule update --recursive --remote
+      - ls -la
+      - cd ananicy && ls -la
+
+  - name: calamares-git
+    image: yonggan/docker-makepkg-drone-ci
+    failure: ignore
+    volumes:   
+      - name: oblivion
+        path: /oblivion
+    environment:
+      DOCKER_MAKEPKG_PATH: /drone/src/$DRONE_STEP_NAME
+      DOCKER_OUT_PATH: /oblivion
+      REPO_API_URL: https://nexus.oblivioncoding.pro/service/rest/v1
+
+  - name: ckbcomp
+    image: yonggan/docker-makepkg-drone-ci
+    failure: ignore
+    volumes:   
+      - name: oblivion
+        path: /oblivion
+    environment:
+      DOCKER_MAKEPKG_PATH: /drone/src/$DRONE_STEP_NAME
+      DOCKER_OUT_PATH: /oblivion
+      REPO_API_URL: https://nexus.oblivioncoding.pro/service/rest/v1
+
+  - name: mkinitcpio-openswap
+    image: yonggan/docker-makepkg-drone-ci
+    failure: ignore
+    volumes:   
+      - name: oblivion
+        path: /oblivion
+    environment:
+      DOCKER_MAKEPKG_PATH: /drone/src/$DRONE_STEP_NAME
+      DOCKER_OUT_PATH: /oblivion
+      REPO_API_URL: https://nexus.oblivioncoding.pro/service/rest/v1
+
+  - name: pamac-all
+    image: yonggan/docker-makepkg-drone-ci
+    failure: ignore
+    volumes:
+      - name: oblivion
+        path: /oblivion
+    environment:
+      DOCKER_MAKEPKG_PATH: /drone/src/$DRONE_STEP_NAME
+      DOCKER_OUT_PATH: /oblivion
+      REPO_API_URL: https://nexus.oblivioncoding.pro/service/rest/v1
+    commands:
+      - pacman -Sy --noconfirm libhandy
+      - /bin/su -s /bin/sh -c '/run.sh /drone/src/"$DRONE_STEP_NAME" "$OUTPUT_DIR"' notroot
+
+
+  - name: snapd-git
+    image: yonggan/docker-makepkg-drone-ci
+    failure: ignore
+    volumes:
+      - name: oblivion
+        path: /oblivion
+    environment:
+      DOCKER_MAKEPKG_PATH: /drone/src/$DRONE_STEP_NAME
+      DOCKER_OUT_PATH: /oblivion
+      REPO_API_URL: https://nexus.oblivioncoding.pro/service/rest/v1
+    commands:
+      - pacman -Sy --noconfirm git go go-tools xfsprogs apparmor squashfs-tools python-docutils
+      - /bin/su -s /bin/sh -c '/run.sh /drone/src/"$DRONE_STEP_NAME" "$OUTPUT_DIR"' notroot
+
+
+  - name: snapd-glib-git
+    image: yonggan/docker-makepkg-drone-ci
+    failure: ignore
+    volumes:   
+      - name: oblivion
+        path: /oblivion
+    environment:
+      DOCKER_MAKEPKG_PATH: /drone/src/$DRONE_STEP_NAME
+      DOCKER_OUT_PATH: /oblivion
+      REPO_API_URL: https://nexus.oblivioncoding.pro/service/rest/v1
+
+  - name: ananicy
+    image: yonggan/docker-makepkg-drone-ci
+    failure: ignore
+    volumes:   
+      - name: oblivion
+        path: /oblivion
+    environment:
+      DOCKER_MAKEPKG_PATH: /drone/src/$DRONE_STEP_NAME
+      DOCKER_OUT_PATH: /oblivion
+      REPO_API_URL: https://nexus.oblivioncoding.pro/service/rest/v1
+
+  - name: nohang
+    image: yonggan/docker-makepkg-drone-ci
+    failure: ignore
+    volumes:   
+      - name: oblivion
+        path: /oblivion
+    environment:
+      DOCKER_MAKEPKG_PATH: /drone/src/$DRONE_STEP_NAME
+      DOCKER_OUT_PATH: /oblivion
+      REPO_API_URL: https://nexus.oblivioncoding.pro/service/rest/v1
+
+  - name: timeshift
+    image: yonggan/docker-makepkg-drone-ci
+    failure: ignore
+    volumes:   
+      - name: oblivion
+        path: /oblivion
+    environment:
+      DOCKER_MAKEPKG_PATH: /drone/src/$DRONE_STEP_NAME
+      DOCKER_OUT_PATH: /oblivion
+      REPO_API_URL: https://nexus.oblivioncoding.pro/service/rest/v1
+
+  - name: timeshift-autosnap
+    image: yonggan/docker-makepkg-drone-ci
+    failure: ignore
+    volumes:   
+      - name: oblivion
+        path: /oblivion
+    environment:
+      DOCKER_MAKEPKG_PATH: /drone/src/$DRONE_STEP_NAME
+      DOCKER_OUT_PATH: /oblivion
+      REPO_API_URL: https://nexus.oblivioncoding.pro/service/rest/v1
+
+  - name: zram-generator
+    image: yonggan/docker-makepkg-drone-ci
+    failure: ignore
+    volumes:   
+      - name: oblivion
+        path: /oblivion
+    environment:
+      DOCKER_MAKEPKG_PATH: /drone/src/$DRONE_STEP_NAME
+      DOCKER_OUT_PATH: /oblivion
+      REPO_API_URL: https://nexus.oblivioncoding.pro/service/rest/v1
+
+  - name: oblivion-settings-manager
+    image: yonggan/docker-makepkg-drone-ci
+    failure: ignore
+    volumes:   
+      - name: oblivion
+        path: /oblivion
+    environment:
+      DOCKER_MAKEPKG_PATH: /drone/src/$DRONE_STEP_NAME
+      DOCKER_OUT_PATH: /oblivion
+      REPO_API_URL: https://nexus.oblivioncoding.pro/service/rest/v1
+
+  - name: build-db-and-push
+    image: archlinux
+    user: 0
+    commands:
+      - pacman -Syu --noconfirm
+      - cd /oblivion/x86_64
+      - cd /oblivion/x86_64 && pacman -S wget curl jq --noconfirm
+      - cd /oblivion/x86_64 && curl -sSL -k -X GET -G $REPO_API_URL/assets?repository=oblivion-os > output
+      - cd /oblivion/x86_64 && cat output | jq '.items | map(.downloadUrl)' > jq-output
+      - cd /oblivion/x86_64 && for k in $(jq -r ".[]" jq-output); do wget "$k"; done
+      - cd /oblivion/x86_64 && cat jq-output && ls -la
+      - cd /oblivion/x86_64 && rm -rf jq-output output repo.*
+      - ls -la /oblivion/x86_64
+      - cd /oblivion/x86_64 && repo-add repo.db.tar.gz *.pkg.tar.*
+      - cd /oblivion/x86_64 && for filename in /oblivion/x86_64/*; do curl -X DELETE -v -u "$USERNAME:$PASSWORD" $REPO_URL/$(basename $filename) ; done
+      - cd /oblivion/x86_64 && for filename in /oblivion/x86_64/*; do curl -v -u "$USERNAME:$PASSWORD" -T $filename $REPO_URL/$(basename $filename) ; done 
+    volumes:
+      - name: oblivion
+        path: /oblivion/x86_64
+    environment:
+      REPO_API_URL: https://nexus.oblivioncoding.pro/service/rest/v1
+      REPO_URL: https://nexus.oblivioncoding.pro/repository/oblivion-os
+      USERNAME:
+        from_secret: nexus_username
+      PASSWORD:
+        from_secret: nexus_password
+
+
+
+volumes:
+  - name: oblivion
+    temp: {}
