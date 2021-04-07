@@ -18,6 +18,9 @@ This Repository wants to achieve a simple building of packages with Drone CI, Do
 git submodule add https://aur.archlinux.org/timeshift.git timeshift
 ```
 6. Register the Packages you want in the _packages.txt_. You can add commands that should be executed first, before building the package with an ^. So for example if you want to install nano before installing timeshift register the package like this in the _packages.txt_ (every package in a single line).
+```
+timeshift^pacman -Sy --noconfirm nano
+```
 7. Change the variables in the _buildDrone.sh_. For example the volumepath describes where the shared volume for all pipeline steps is mounted. This is important because this i later the name you add into your _pamac.conf_. Also change the _apiurl_ to the API URL of your Nexus Instance.
 8. Change _buildjob.txt_ to your needs. So for example change the environemt variables to your Nexus instance and change the mountpoint in the commands to your repo name.
 9. run _buildDrone.sh_ and push the changes to your repository.
